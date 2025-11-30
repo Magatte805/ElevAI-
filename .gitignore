@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+model.pkl
+*.db
+
+# Node / Frontend
+node_modules/
+build/
+dist/
