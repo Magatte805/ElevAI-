@@ -5,7 +5,7 @@ from backend.database import get_db
 import pickle
 import numpy as np
 import os
-
+import logging
 router = APIRouter(
     prefix="/analyze",
     tags=["analysis"]
@@ -72,6 +72,8 @@ def analyze_user(user_id: int, db: Session = Depends(get_db)):
         explanations=explanations,
         recommendations=recommendations
     )
+    logging.info(f"Analyse effectuée pour l'utilisateur {user_id}, score: {score}")
+
 
     return crud.create_analysis_result(db, analysis_data)
 

@@ -4,6 +4,7 @@ from backend import crud, schemas
 from backend.database import get_db
 from typing import Optional
 from datetime import date
+import logging
 
 router = APIRouter(
     prefix="/data",
@@ -14,6 +15,7 @@ router = APIRouter(
 @router.post("/", response_model=schemas.DailyDataOut)
 def add_daily_data(daily_data: schemas.DailyDataCreate, db: Session = Depends(get_db)):
     db_data = crud.create_daily_data(db, daily_data)
+    logging.info(f"Données journalières ajoutées pour l'utilisateur {daily_data.user_id}")
     return db_data
 
 # GET /data/{user_id} : récupérer l'historique
