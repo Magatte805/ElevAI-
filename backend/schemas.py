@@ -56,3 +56,19 @@ class AnalysisResultOut(AnalysisResultBase):
 
     class Config:
         orm_mode = True
+
+# Schéma pour analyse custom (endpoint POST /analyze/custom)
+class CustomAnalysisInput(BaseModel):
+    sommeil_h: float
+    pas: int
+    sport_min: int
+    calories: int
+    humeur_0_5: float
+    stress_0_5: float
+    fc_repos: int
+
+class CustomAnalysisOut(BaseModel):
+    score: float
+    category: str
+    explanations: dict
+    recommendations: List[str]
