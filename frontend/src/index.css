@@ -1,0 +1,395 @@
+/* ====== Global ====== */
+:root {
+  --bg: #f5f7fb;
+  --bg-card: #ffffff;
+  --primary: #4f46e5;
+  --primary-soft: #eef0ff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --radius-lg: 16px;
+  --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.09);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top left, #eef2ff, #f9fafb 45%, #f3f4ff);
+  color: var(--text-main);
+}
+
+/* ====== App layout ====== */
+
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-logo {
+  margin: 0;
+  font-size: 1.7rem;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+}
+
+/* ====== Nav ====== */
+
+.app-nav {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.nav-link:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.nav-link.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.35);
+}
+
+/* ====== Main / pages ====== */
+
+.app-main {
+  flex: 1;
+  padding: 2.5rem 1rem 3rem;
+}
+
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 2rem 2.5rem;
+}
+
+/* Petits écrans */
+@media (max-width: 768px) {
+  .app-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .page-container {
+    padding: 1.5rem 1.25rem;
+  }
+
+  form {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ====== Titres de pages ====== */
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+/* ====== Formulaires ====== */
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem 1.5rem;
+  align-items: flex-start;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  gap: 0.3rem;
+}
+
+input,
+select,
+textarea {
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.3);
+  background-color: #f9fafb;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* ====== Boutons ====== */
+
+button {
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(79, 70, 229, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.1s ease,
+    background-color 0.1s ease;
+}
+
+button:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}
+
+/* Bouton secondaire */
+button.secondary {
+  background: #ffffff;
+  color: var(--primary);
+  border: 1px solid var(--primary-soft);
+  box-shadow: none;
+}
+
+button.secondary:hover {
+  background: var(--primary-soft);
+}
+
+/* ====== Tableau dashboard (version améliorée + séparateurs colonnes) ====== */
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #d1d5db; /* bordure autour du tableau */
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Header */
+th {
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  color: #111827;
+  font-weight: 600;
+  border-bottom: 1px solid #d1d5db;
+  text-align: left;
+  border-right: 1px solid #d1d5db; /* séparateur */
+}
+
+/* Retirer la bordure droite sur le dernier th */
+th:last-child {
+  border-right: none;
+}
+
+/* Cellules */
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb; 
+  color: #1f2937;
+  border-right: 1px solid #e5e7eb; /* séparateur */
+}
+
+/* Retirer la bordure droite sur le dernier td */
+td:last-child {
+  border-right: none;
+}
+
+/* Alternance des lignes */
+tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+/* Dernière ligne sans bordure du bas */
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hover */
+tbody tr:hover {
+  background: #eef2ff;
+  transition: background 0.15s ease;
+}
+
+/* ====== Cards ====== */
+
+/*.score-card,
+.radar-card {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: #f9fafb;
+}*/
+
+.score-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; /* espace égal entre donut et texte */
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+.score-details {
+  flex: 1;                 /* occupe l’espace disponible */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centre verticalement */
+}
+
+.score-card {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  background: #f9fafb;
+}
+
+
+.score-number {
+  font-size: 1.3rem;
+  font-weight: 700;
+  fill: #111827;
+}
+
+
+/* ====== Blocs dashboard ====== */
+
+.dashboard-block {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  background: #f9fafb;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.dashboard-block:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+  border-color: rgba(79, 70, 229, 0.35);
+  background: #ffffff;
+}
+
+/* ScoreCard à l’intérieur du bloc */
+.score-card {
+  padding: 0;        /* le padding vient du bloc */
+  border: none;      /* on laisse le bloc gérer le cadre */
+  background: none;
+}
+
+.score-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+.score-number {
+  font-size: 1.3rem;
+  font-weight: 700;
+  fill: #111827;
+}
+
+.score-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ====== Recommandations (icônes intelligentes) ====== */
+
+.recommendation-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.recommendation-item {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.6rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: all 0.15s ease;
+}
+
+.recommendation-item:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+
+.rec-icon {
+  font-size: 1.3rem;
+}
+
+
+
+
+
+
+
+
