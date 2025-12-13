@@ -117,3 +117,23 @@ def analyze_custom(data: schemas.CustomAnalysisInput):
         "explanations": explanations,
         "recommendations": recommendations
     }
+
+@router.get("/recommend/{user_id}")
+def get_recommendations(user_id: int, db: Session = Depends(get_db)):
+    """
+    Retourne uniquement les recommandations personnalisées
+    pour un utilisateur donné.
+    """
+    # On récupère la dernière analyse stockée
+    analysis = crud.get_latest_analysis(db, user_id)
+
+    if not analysis:
+        raise HTTPException(
+            status_code=404,
+            detail="Aucune analyse trouvée pour cet utilisateur"
+        )
+
+    return {
+        "user_id": user_id,
+        "recommendations": analysis.recommendations
+    }

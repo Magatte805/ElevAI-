@@ -11,6 +11,20 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // ✅ Analyse "ready" pour toujours afficher les blocs
+  const analysisReady = analysis || {
+    score: 0,
+    category: "N/A",
+    risk_prediction: "",
+    recommendations: ["Aucune recommandation"],
+    radar: [
+      { metric: "Sommeil", value: 50 },
+      { metric: "Activité", value: 50 },
+      { metric: "Stress", value: 50 },
+      { metric: "Humeur", value: 50 },
+    ],
+  };
+
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -37,105 +51,45 @@ function Dashboard() {
     fetchAll();
   }, [navigate]);
 
-  const radarData = analysis?.radar || [
-    { metric: "Sommeil", value: 50 },
-    { metric: "Activité", value: 50 },
-    { metric: "Stress", value: 50 },
-    { metric: "Humeur", value: 50 },
-  ];
+  function getIcon(text) {
+    const t = text.toLowerCase();
+    if (t.includes("sommeil") || t.includes("dormir") || t.includes("nuit")) return "😴";
+    if (t.includes("stress") || t.includes("détente") || t.includes("relax")) return "😌";
+    if (t.includes("activité") || t.includes("physique") || t.includes("sport") || t.includes("marche") || t.includes("pas")) return "🏃‍♂️";
+    if (t.includes("eau") || t.includes("hydrata")) return "💧";
+    if (t.includes("alimentation") || t.includes("manger") || t.includes("calories") || t.includes("repas")) return "🍎";
+    if (t.includes("humeur") || t.includes("moral")) return "🙂";
+    return "💡";
+  }
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-
-    // Fonction pour choisir l’icône en fonction du texte
-  function getIcon(text) {
-        const t = text.toLowerCase();
-
-        // Sommeil / fatigue
-        if (t.includes("sommeil") || t.includes("dormir") || t.includes("nuit")) {
-            return "😴";
-        }
-
-        // Stress / détente
-        if (t.includes("stress") || t.includes("détente") || t.includes("relax")) {
-            return "😌";
-        }
-
-        // Activité physique / sport / pas
-        if (
-            t.includes("activité") ||
-            t.includes("physique") ||
-            t.includes("sport") ||
-            t.includes("marche") ||
-            t.includes("pas")
-        ) {
-            return "🏃‍♂️";
-        }
-
-        // Hydratation
-        if (t.includes("eau") || t.includes("hydrata")) {
-            return "💧";
-        }
-
-        // Alimentation / calories
-        if (
-            t.includes("alimentation") ||
-            t.includes("manger") ||
-            t.includes("calories") ||
-            t.includes("repas")
-        ) {
-            return "🍎";
-        }
-
-        // Humeur
-        if (t.includes("humeur") || t.includes("moral")) {
-            return "🙂";
-        }
-
-        // Par défaut
-        return "💡";
-        }
-
 
   return (
     <div>
       <h2>Dashboard</h2>
 
-      {/* === Bloc 1 : Score global === */}
-      <section className="dashboard-block">
-        <ScoreCard
-          score={analysis?.score}
-          category={analysis?.category}
-          riskPrediction={analysis?.risk_prediction}
-        />
-      </section>
+      {/* === Bloc 1 : Score global + recommandations === */}
+      <section className="dashboard-block score-card" data-testid="score-card">
+  <ScoreCard
+    score={analysisReady.score}
+    category={analysisReady.category}
+    riskPrediction={analysisReady.risk_prediction}
+  />
+  <ul className="recommendation-list" data-testid="recommendation-list">
+    {analysisReady.recommendations.map((r, i) => (
+      <li key={i} className="recommendation-item">{r}</li>
+    ))}
+  </ul>
+</section>
 
-      {/* === Bloc 2 : Profil global (Radar) === */}
-      <section className="dashboard-block">
-        <h3>Profil global</h3>
-        <RadarCard data={radarData} />
-      </section>
-
-      {/* === Bloc 3 : Recommandations === */}
-      <section className="dashboard-block">
-        <h3>Recommandations</h3>
-
-        {analysis?.recommendations?.length ? (
-            <ul className="recommendation-list">
-            {analysis.recommendations.map((r, i) => (
-                <li key={i} className="recommendation-item">
-                <span className="rec-icon">{getIcon(r)}</span>
-                {r}
-                </li>
-            ))}
-            </ul>
-        ) : (
-            <p>Aucune recommandation pour le moment.</p>
-        )}
-        </section>
+<section className="dashboard-block radar-chart" data-testid="radar-chart">
+  <h3>Profil global</h3>
+  <RadarCard data={analysisReady.radar} />
+</section>
 
 
-      {/* === Bloc 4 : Données brutes === */}
+      {/* === Bloc 3 : Données brutes === */}
       <section className="dashboard-block">
         <h3>Données brutes</h3>
         {data.length === 0 ? (

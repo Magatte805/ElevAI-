@@ -43,3 +43,10 @@ def create_analysis_result(db: Session, analysis: schemas.AnalysisResultCreate) 
 
 def get_analysis_results(db: Session, user_id: int) -> List[models.AnalysisResult]:
     return db.query(models.AnalysisResult).filter(models.AnalysisResult.user_id == user_id).all()
+def get_latest_analysis(db: Session, user_id: int) -> models.AnalysisResult | None:
+    return (
+        db.query(models.AnalysisResult)
+        .filter(models.AnalysisResult.user_id == user_id)
+        .order_by(models.AnalysisResult.id.desc())
+        .first()
+    )
