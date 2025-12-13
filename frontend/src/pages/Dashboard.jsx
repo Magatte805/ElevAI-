@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getUserData, getAnalysis } from "../api";
 import ScoreCard from "../components/ScoreCard.jsx";
 import RadarCard from "../components/RadarCard.jsx";
+import { predictNext7Days } from "../utils/predictions.js";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -64,6 +65,19 @@ function Dashboard() {
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
+// === Prévision 7 jours (B2) ===
+
+function calculateDailyScore(row) {
+  const sommeilScore = (row.sommeil_h / 8) * 25;         // 0-25
+  const pasScore = (row.pas / 10000) * 25;               // 0-25
+  const stressScore = ((5 - row.stress_0_5) / 5) * 25;   // 0-25
+  const humeurScore = (row.humeur_0_5 / 5) * 25;         // 0-25
+  return Math.round(sommeilScore + pasScore + stressScore + humeurScore);
+}
+
+const historicalScores = data.slice(-3).map(d => calculateDailyScore(d)); // derniers 3 jours
+const next3DaysPrediction = predictNext7Days(historicalScores).slice(0, 3); // on prend juste 3 jours
+
 
   return (
     <div>
@@ -71,23 +85,22 @@ function Dashboard() {
 
       {/* === Bloc 1 : Score global + recommandations === */}
       <section className="dashboard-block score-card" data-testid="score-card">
-  <ScoreCard
-    score={analysisReady.score}
-    category={analysisReady.category}
-    riskPrediction={analysisReady.risk_prediction}
-  />
-  <ul className="recommendation-list" data-testid="recommendation-list">
-    {analysisReady.recommendations.map((r, i) => (
-      <li key={i} className="recommendation-item">{r}</li>
-    ))}
-  </ul>
-</section>
-
-<section className="dashboard-block radar-chart" data-testid="radar-chart">
-  <h3>Profil global</h3>
-  <RadarCard data={analysisReady.radar} />
-</section>
-
+        <ScoreCard
+          score={analysisReady.score}
+          category={analysisReady.category}
+          riskPrediction={analysisReady.risk_prediction}
+        />
+        <ul className="recommendation-list" data-testid="recommendation-list">
+          {analysisReady.recommendations.map((r, i) => (
+            <li key={i} className="recommendation-item">{r}</li>
+          ))}
+        </ul>
+      </section>
+      {/* === Bloc 2  */}
+      <section className="dashboard-block radar-chart" data-testid="radar-chart">
+        <h3>Profil global</h3>
+        <RadarCard data={analysisReady.radar} />
+      </section>
 
       {/* === Bloc 3 : Données brutes === */}
       <section className="dashboard-block">
@@ -119,8 +132,21 @@ function Dashboard() {
           </table>
         )}
       </section>
+       {/* === Bloc 4 : Prévision 7 jours === */}
+      <section className="dashboard-block">
+        <h3>Prévision du score sur 3 jours</h3>
+        <ul>
+          {next3DaysPrediction.map((score, i) => (
+            <li key={i}>Jour {i + 1} : {score}</li>
+          ))}
+        </ul>
+      </section>
+
+
     </div>
   );
+ 
+
 }
 
 export default Dashboard;
