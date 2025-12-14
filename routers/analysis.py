@@ -128,10 +128,17 @@ def get_recommendations(user_id: int, db: Session = Depends(get_db)):
     analysis = crud.get_latest_analysis(db, user_id)
 
     if not analysis:
-        raise HTTPException(
-            status_code=404,
-            detail="Aucune analyse trouvée pour cet utilisateur"
-        )
+        return {
+            "id": 0,
+            "user_id": user_id,
+            "score": 0,
+            "category": "Aucune donnée",
+            "explanations": {},
+            "recommendations": [
+                "Ajoutez vos premières données quotidiennes pour voir votre analyse"
+            ]
+        }
+
 
     return {
         "user_id": user_id,
