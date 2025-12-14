@@ -6,6 +6,28 @@ import RadarCard from "../components/RadarCard";
 import Header from "../components/header"; 
 import { predictNext7Days } from "../utils/predictions";
 
+// Transforme le nom d'une feature en texte lisible
+function describeFeature(feature, type) {
+  switch(feature) {
+    case "sommeil_h":
+      return type === "faible" ? "Durée du sommeil trop faible" : "Durée du sommeil trop longue";
+    case "pas":
+      return type === "faible" ? "Nombre de pas trop faible" : "Nombre de pas trop élevé";
+    case "sport_min":
+      return type === "faible" ? "Minutes de sport trop faibles" : "Minutes de sport trop élevées";
+    case "calories":
+      return type === "faible" ? "Calories brûlées trop faibles" : "Calories brûlées trop élevées";
+    case "humeur_0_5":
+      return type === "faible" ? "Humeur anormalement basse" : "Humeur anormalement élevée";
+    case "stress_0_5":
+      return type === "faible" ? "Stress trop faible" : "Stress trop élevé";
+    case "fc_repos":
+      return type === "faible" ? "Fréquence cardiaque au repos trop basse" : "Fréquence cardiaque au repos trop élevée";
+    default:
+      return feature;
+  }
+}
+
 
 
 function Dashboard() {
@@ -14,6 +36,30 @@ function Dashboard() {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Anomalies
+  const [anomalies, setAnomalies] = useState([]);
+
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  if (!token || !userId) return;
+
+  async function fetchAnomalies() {
+    try {
+      const res = await fetch(`http://localhost:8000/analyze/anomalies/${userId}`);
+      const data = await res.json();
+      setAnomalies(data.anomalies || []);
+    } catch (err) {
+      console.log("Erreur fetch anomalies :", err);
+      setAnomalies([]);
+    }
+  }
+
+  fetchAnomalies();
+}, []);
+
+
 
   // 🔐 Protection route
   useEffect(() => {
@@ -114,6 +160,23 @@ const next7DaysPrediction = predictNext7Days(historicalScores);
           category={analysisReady.category}
         />
       </section>
+
+     {/* Anomalies */}
+      <section style={{ marginTop: "30px" }}>
+        <h3>Anomalies détectées</h3>
+        {anomalies.length === 0 ? (
+          <p>Aucune anomalie sur les 14 derniers jours.</p>
+        ) : (
+          <ul>
+            {anomalies.map((a, i) => (
+              <li key={i}>
+                <strong>{a.date}</strong> : {a.features.map(f => `${f.feature} ${f.type} (${f.value})`).join(", ")}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
 
       {/* 🟣 RADAR */}
       <section style={{ marginTop: "30px" }}>

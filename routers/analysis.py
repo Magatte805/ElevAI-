@@ -144,3 +144,42 @@ def get_recommendations(user_id: int, db: Session = Depends(get_db)):
         "user_id": user_id,
         "recommendations": analysis.recommendations
     }
+
+## Anomalies
+@router.get("/anomalies/{user_id}")
+def get_anomalies(user_id: int, db: Session = Depends(get_db)):
+    # Récupérer les 14 derniers jours
+    data = crud.get_daily_data(db, user_id=user_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Pas de données pour cet utilisateur")
+
+    data_array = np.array([
+        [d.sommeil_h, d.pas, d.sport_min, d.calories, d.humeur_0_5, d.stress_0_5, d.fc_repos]
+        for d in data[-14:]  
+    ])
+    feature_names = ["sommeil_h", "pas", "sport_min", "calories", "humeur_0_5", "stress_0_5", "fc_repos"]
+
+    anomalies = []
+
+    for i, row in enumerate(data[-14:]):
+        abnormal_features = []
+        for j, feature in enumerate(feature_names):
+            col = data_array[:, j]
+            mu = np.mean(col)
+            sigma = np.std(col)
+            if sigma == 0:
+                continue
+            value = row.__dict__[feature]
+            if value < mu - 2*sigma:
+                abnormal_features.append({"feature": feature, "type": "faible", "value": value})
+            elif value > mu + 2*sigma:
+                abnormal_features.append({"feature": feature, "type": "élevé", "value": value})
+        
+        if abnormal_features:
+            anomalies.append({
+                "date": row.date,
+                "features": abnormal_features
+            })
+
+    return {"user_id": user_id, "anomalies": anomalies}
+
