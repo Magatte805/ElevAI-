@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import './styles/splash.css';
 
 function Splash() {
   const navigate = useNavigate();
@@ -12,15 +13,9 @@ function Splash() {
   }, [navigate]);
 
   return (
-    <div style={{
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      fontSize: "3rem",
-      fontWeight: "bold"
-    }}>
+    <div className="splash-container">
       <span className="logo-animate">ElevAI</span>
+      <p className="splash-subtitle">Bienvenue chez ElevAI</p>
     </div>
   );
 }

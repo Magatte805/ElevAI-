@@ -1,28 +1,24 @@
 import { PieChart, Pie, Cell } from "recharts";
 
 function ScoreCard({ score, category, riskPrediction }) {
-  const safeScore = typeof score === "number" ? score : 0;
+  const safeScore = Math.min(Math.max(score || 0, 0), 100);
 
-  // Fonction couleur dynamique
   function getColor(score) {
-    if (score >= 80) return "#16a34a";      // vert foncé (excellent)
-    if (score >= 60) return "#22c55e";      // vert clair (bon)
-    if (score >= 40) return "#eab308";      // jaune (moyen)
-    if (score >= 20) return "#f97316";      // orange (faible)
-    return "#dc2626";                       // rouge (mauvais)
+    if (score > 80) return "#16a34a";   
+    if (score > 50) return "#f97316";   
+    return "#dc2626";                    
   }
 
   const data = [
     { name: "Score", value: safeScore },
-    { name: "Reste", value: Math.max(0, 100 - safeScore) },
+    { name: "Reste", value: 100 - safeScore },
   ];
 
-  // Couleurs : 1 = partie remplie, 2 = arrière-plan
   const COLORS = [getColor(safeScore), "#e5e7eb"];
 
   return (
     <div className="score-card">
-      <h3>Score global</h3>
+      <h3>Votre score santé global</h3>
 
       <div className="score-content">
         <PieChart width={200} height={200}>
@@ -40,7 +36,6 @@ function ScoreCard({ score, category, riskPrediction }) {
             ))}
           </Pie>
 
-          {/* Affichage central sur une seule ligne */}
           <text
             x="50%"
             y="50%"
@@ -48,13 +43,14 @@ function ScoreCard({ score, category, riskPrediction }) {
             dominantBaseline="middle"
             className="score-number"
           >
-            {safeScore} / 100
+            {Math.round(safeScore)}%
           </text>
+
         </PieChart>
 
         <div className="score-details">
           <p className="score-category">
-            <strong>Catégorie :</strong> {category ?? "N/A"}
+            <strong>Évaluation globale:</strong> {category ?? "N/A"}
           </p>
           {riskPrediction && (
             <p className="score-risk">

@@ -2,22 +2,26 @@ import { test, expect } from '@playwright/test';
 
 test.describe('ElevAI End-to-End Tests', () => {
 
-  test('T1: Création d’un utilisateur', async ({ page }) => {
-    await page.goto('http://localhost:5173'); 
+test('T1: Création d’un utilisateur', async ({ page }) => {
+  await page.goto('http://localhost:5173/signup');
 
-    // Remplir le formulaire utilisateur
-    await page.fill('input[name="age"]', '28');
-    await page.selectOption('select[name="genre"]', 'Homme');
-    await page.fill('input[name="taille_cm"]', '178');
-    await page.fill('input[name="poids_kg"]', '74');
-    await page.fill('input[name="objectif"]', 'Améliorer le sommeil');
+  // Remplir le formulaire utilisateur
+  await page.fill('input[name="username"]', 'testuser');
+  await page.fill('input[name="password"]', '123456');
+  await page.fill('input[name="age"]', '28');
+  await page.fill('input[name="weight"]', '74');
+  await page.fill('input[name="height"]', '178');
+  await page.fill('input[name="gender"]', 'Homme');        // input text, pas select
+  await page.fill('input[name="objective"]', 'Améliorer le sommeil'); // name correct
 
-    // Cliquer sur "Enregistrer"
-    await page.click('[data-testid="create-profile-btn"]');
+  // Cliquer sur le bouton S’inscrire
+  await page.click('button[type="submit"]');
 
-    // Vérifier qu’on est redirigé vers le dashboard
-    await expect(page).toHaveURL(/add-entry/i);
-  });
+  // Vérifier qu’on est redirigé vers /add-entry
+  await expect(page).toHaveURL(/add-entry/i);
+});
+
+
 
  test('T2: Ajouter une journée de données', async ({ page }) => {
     // Simuler qu’un utilisateur est connecté

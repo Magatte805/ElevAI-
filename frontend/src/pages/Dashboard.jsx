@@ -5,30 +5,21 @@ import ScoreCard from "../components/ScoreCard";
 import RadarCard from "../components/RadarCard";
 import Header from "../components/header"; 
 import { predictNext7Days } from "../utils/predictions";
+import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import './styles/dashboard.css';
 
-// Transforme le nom d'une feature en texte lisible
 function describeFeature(feature, type) {
   switch(feature) {
-    case "sommeil_h":
-      return type === "faible" ? "Durée du sommeil trop faible" : "Durée du sommeil trop longue";
-    case "pas":
-      return type === "faible" ? "Nombre de pas trop faible" : "Nombre de pas trop élevé";
-    case "sport_min":
-      return type === "faible" ? "Minutes de sport trop faibles" : "Minutes de sport trop élevées";
-    case "calories":
-      return type === "faible" ? "Calories brûlées trop faibles" : "Calories brûlées trop élevées";
-    case "humeur_0_5":
-      return type === "faible" ? "Humeur anormalement basse" : "Humeur anormalement élevée";
-    case "stress_0_5":
-      return type === "faible" ? "Stress trop faible" : "Stress trop élevé";
-    case "fc_repos":
-      return type === "faible" ? "Fréquence cardiaque au repos trop basse" : "Fréquence cardiaque au repos trop élevée";
-    default:
-      return feature;
+    case "sommeil_h": return type === "faible" ? "Durée du sommeil trop faible" : "Durée du sommeil trop longue";
+    case "pas": return type === "faible" ? "Nombre de pas trop faible" : "Nombre de pas trop élevé";
+    case "sport_min": return type === "faible" ? "Minutes de sport trop faibles" : "Minutes de sport trop élevées";
+    case "calories": return type === "faible" ? "Calories brûlées trop faibles" : "Calories brûlées trop élevées";
+    case "humeur_0_5": return type === "faible" ? "Humeur anormalement basse" : "Humeur anormalement élevée";
+    case "stress_0_5": return type === "faible" ? "Stress trop faible" : "Stress trop élevé";
+    case "fc_repos": return type === "faible" ? "Fréquence cardiaque au repos trop basse" : "Fréquence cardiaque au repos trop élevée";
+    default: return feature;
   }
 }
-
-
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -36,38 +27,31 @@ function Dashboard() {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Anomalies
   const [anomalies, setAnomalies] = useState([]);
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-  if (!token || !userId) return;
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+    if (!token || !userId) return;
 
-  async function fetchAnomalies() {
-    try {
-      const res = await fetch(`http://localhost:8000/analyze/anomalies/${userId}`);
-      const data = await res.json();
-      setAnomalies(data.anomalies || []);
-    } catch (err) {
-      console.log("Erreur fetch anomalies :", err);
-      setAnomalies([]);
+    async function fetchAnomalies() {
+      try {
+        const res = await fetch(`http://localhost:8000/analyze/anomalies/${userId}`);
+        const data = await res.json();
+        setAnomalies(data.anomalies || []);
+      } catch (err) {
+        console.log("Erreur fetch anomalies :", err);
+        setAnomalies([]);
+      }
     }
-  }
+    fetchAnomalies();
+  }, []);
 
-  fetchAnomalies();
-}, []);
-
-
-
-  // 🔐 Protection route
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // 📡 Chargement données
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
@@ -80,90 +64,115 @@ function Dashboard() {
         setLoading(true);
         const d = await getUserData(userId);
         let a = null;
-        try {
-          a = await getAnalysis(userId);
-          console.log("Analyse reçue :", a);   
-        } catch (err) {
-          console.log("Erreur getAnalysis :", err); 
-          a = null; 
-        }
-
-        setData(d || []);
-        setAnalysis(a);
-
+        try { a = await getAnalysis(userId); } catch {}
         setData(d || []);
         setAnalysis(a || null);
       } catch (err) {
         setError("Erreur lors du chargement du dashboard.");
-      } finally {
-        setLoading(false);
-      }
+      } finally { setLoading(false); }
     }
-
     fetchAll();
   }, [navigate]);
 
-  
   if (loading) return <p>Chargement du dashboard...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
-  // Valeur par défaut si pas encore d’analyse
   const analysisReady = analysis
-  ? {
-      score: analysis.score,
-      category: analysis.category,
-      radar: [
-        { metric: "Sommeil", value: Math.round(analysis.explanations.sommeil_h * 100) },
-        { metric: "Activité", value: Math.round(analysis.explanations.pas * 100) },
-        { metric: "Stress", value: Math.round(analysis.explanations.stress_0_5 ?? 50) }, 
-        { metric: "Humeur", value: Math.round(analysis.explanations.humeur_0_5 * 100) },
-      ],
-      recommendations: analysis.recommendations,
-    }
-  : {
-      score: 77,
-      category: "Bon",
-      radar: [
-        { metric: "Sommeil", value: 80 },
-        { metric: "Activité", value: 60 },
-        { metric: "Stress", value: 30 },
-        { metric: "Humeur", value: 75 },
-      ],
-      recommendations: ["Bien dormir", "Faire du sport", "Relaxer un peu"],
-    };
+    ? {
+        score: analysis.score,
+        category: analysis.category,
+        radar: [
+          { metric: "Sommeil", value: Math.round(analysis.explanations.sommeil_h * 100) },
+          { metric: "Activité", value: Math.round(analysis.explanations.pas * 100) },
+          { metric: "Stress", value: Math.round(analysis.explanations.stress_0_5 ?? 50) }, 
+          { metric: "Humeur", value: Math.round(analysis.explanations.humeur_0_5 * 100) },
+        ],
+        recommendations: analysis.recommendations,
+      }
+    : {
+        score: 77,
+        category: "Bon",
+        radar: [
+          { metric: "Sommeil", value: 80 },
+          { metric: "Activité", value: 60 },
+          { metric: "Stress", value: 30 },
+          { metric: "Humeur", value: 75 },
+        ],
+        recommendations: ["Bien dormir", "Faire du sport", "Relaxer un peu"],
+      };
 
-    // Calculer le score quotidien à partir des données
-function calculateDailyScore(row) {
-  const sommeilScore = (row.sommeil_h / 8) * 25;         
-  const pasScore = (row.pas / 10000) * 25;              
-  const stressScore = ((5 - row.stress_0_5) / 5) * 25;   
-  const humeurScore = (row.humeur_0_5 / 5) * 25;         
-  return Math.round(sommeilScore + pasScore + stressScore + humeurScore);
-}
+  function calculateDailyScore(row) {
+    const sommeil = Math.min(row.sommeil_h || 0, 12);
+    const pas = Math.min(row.pas || 0, 30000);
+    const sport = Math.min(row.sport_min || 0, 180);
+    const humeur = Math.min(Math.max(row.humeur_0_5 || 0, 0), 5);
+    const stress = Math.min(Math.max(row.stress_0_5 || 0, 0), 5);
 
-// Scores historiques (derniers 7 jours max)
-const historicalScores = data.slice(-7).map(d => calculateDailyScore(d));
+    const sommeilScore = (sommeil / 8) * 25;         
+    const pasScore = (pas / 10000) * 25;              
+    const stressScore = ((5 - stress) / 5) * 25;   
+    const humeurScore = (humeur / 5) * 25;         
 
-// Prédiction 7 jours
-const next7DaysPrediction = predictNext7Days(historicalScores);
+    return Math.round(sommeilScore + pasScore + stressScore + humeurScore);
+  }
 
+  const historicalScores = data.slice(-7).map(d => calculateDailyScore(d));
+  const next7DaysPrediction = predictNext7Days(historicalScores);
 
   return (
-    <div style={{ padding: "20px" }}>
-
-       {/* Menu / Header */}
+    <div className="dashboard-container">
       <Header />
-      {/* 🟢 SCORE */}
-      <section>
-        <ScoreCard
-          score={analysisReady.score}
-          category={analysisReady.category}
-        />
-      </section>
+      <h1 className="dashboard-title">Bienvenue sur ton Dashboard</h1>
 
-     {/* Anomalies */}
-      <section style={{ marginTop: "30px" }}>
-        <h3>Anomalies détectées</h3>
+      {/* SCORE */}
+      <div className="dashboard-card">
+        <ScoreCard score={analysisReady.score} category={analysisReady.category} />
+      </div>
+
+      {/* Radar & 5 derniers scores côte à côte */}
+      <div className="card-row">
+        {/* RADAR */}
+        <div className="dashboard-card card-half">
+          <h2 className="card-title">Répartition de vos indicateurs clés</h2>
+          <RadarCard data={analysisReady.radar} />
+        </div>
+
+        {/* 5 derniers scores */}
+        <div className="dashboard-card card-half pie-section">
+          <h2 className="card-title">Comparaison des 5 derniers scores</h2>
+          {historicalScores.length === 0 ? (
+            <p>Aucune donnée pour l’instant.</p>
+          ) : (
+            <PieChart width={300} height={300}>
+              <Pie
+                data={historicalScores.slice(-5).map((score, idx) => ({
+                  name: `Jour ${data.length - 5 + idx + 1}`,
+                  value: score
+                }))}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#6F42C1"
+                label={({ value }) => `${value}%`}
+              >
+                {historicalScores.slice(-5).map((_, idx) => (
+                  <Cell key={`cell-${idx}`} fill={["#6F42C1", "#2C2C54", "#8E44AD", "#9B59B6", "#BB8FCE"][idx % 5]} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value, name) => [`${value}%`, name]}
+              />
+              <Legend verticalAlign="bottom" height={36} />
+            </PieChart>
+          )}
+        </div>
+      </div>
+
+      {/* Anomalies */}
+      <div className="dashboard-card">
+        <h2 className="card-title">Anomalies détectées</h2>
         {anomalies.length === 0 ? (
           <p>Aucune anomalie sur les 14 derniers jours.</p>
         ) : (
@@ -175,56 +184,17 @@ const next7DaysPrediction = predictNext7Days(historicalScores);
             ))}
           </ul>
         )}
-      </section>
-
-
-      {/* 🟣 RADAR */}
-      <section style={{ marginTop: "30px" }}>
-        <h3>Profil global</h3>
-        <RadarCard data={analysisReady.radar} />
-      </section>
-
-      {/* 📊 TABLE */}
-      <section style={{ marginTop: "30px" }}>
-        <h3>Données récentes</h3>
-        {data.length === 0 ? (
-          <p>Aucune donnée pour l’instant.</p>
-        ) : (
-          <table border="1" cellPadding="5">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Sommeil</th>
-                <th>Pas</th>
-                <th>Stress</th>
-                <th>Humeur</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, i) => (
-                <tr key={i}>
-                  <td>{row.date}</td>
-                  <td>{row.sommeil_h}</td>
-                  <td>{row.pas}</td>
-                  <td>{row.stress_0_5}</td>
-                  <td>{row.humeur_0_5}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+      </div>
 
       {/* Prévision 7 jours */}
-      <section style={{ marginTop: "30px" }}>
-        <h3>Prévision du score sur 7 jours</h3>
+      <div className="dashboard-card">
+        <h2 className="card-title">Prévision de vos scores des 7 prochians jours</h2>
         <ul>
           {next7DaysPrediction.map((score, i) => (
             <li key={i}>Jour {i + 1} : {score}%</li>
           ))}
         </ul>
-      </section>
-
+      </div>
     </div>
   );
 }

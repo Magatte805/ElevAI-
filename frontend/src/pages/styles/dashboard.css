@@ -1,0 +1,94 @@
+/* Container principal */
+.dashboard-container {
+  background-color: #f8f8f8;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+/* Titre général */
+.dashboard-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #2C2C54;
+}
+
+/* Card / rectangle */
+.dashboard-card {
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  padding: 20px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Titre de section dans la card */
+.card-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2C2C54;
+  text-align: center;
+}
+
+/* Flex row pour cartes côte à côte */
+.card-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center; 
+}
+
+/* Chaque card dans la row */
+.card-half {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pour PieChart et RadarCard */
+.card-half .recharts-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Pie chart - légende centrée */
+.pie-section .recharts-legend-wrapper {
+  justify-content: center !important;
+}
+
+/* Texte éventuel sous les graphiques */
+.card-text {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1rem;
+  color: #333;
+}
+
+.dashboard-card ul {
+  list-style-type: none; 
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center; 
+  gap: 20px; 
+}
+
+.dashboard-card ul li {
+  background-color: #f0f0f0;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #2C2C54;
+}

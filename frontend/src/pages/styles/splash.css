@@ -1,0 +1,45 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.splash-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #2C2C54, #6F42C1);
+  color: #F5F5F5;
+  flex-direction: column;
+  text-align: center;
+}
+
+.logo-animate {
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 15px rgba(0,0,0,0.6);
+  animation: pulse 1.5s ease-in-out infinite, fadeIn 1s ease forwards;
+  opacity: 0;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+
+.splash-subtitle {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  color: #DDD;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 0.5s;
+}

@@ -42,7 +42,7 @@ async function getAnalysis(userId) {
     });
 }
 
-/* ✅ 5. LOGIN (À AJOUTER) */
+/* 5. LOGIN (À AJOUTER) */
 async function login(username, password) {
   return fetchBackend(`${BASE_URL}/users/login`, {
     method: "POST",

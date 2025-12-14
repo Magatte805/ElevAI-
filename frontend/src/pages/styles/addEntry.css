@@ -1,0 +1,86 @@
+.add-entry-page {
+  background-color: #fff; 
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 30px 20px;
+  color: #2C2C54;
+}
+
+.add-entry-form-container {
+  background-color: #f9f9f9; 
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  max-width: 700px;
+  margin: 30px auto;
+}
+
+.add-entry-form-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.add-entry-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.add-entry-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.add-entry-form input {
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.add-entry-form input:focus {
+  outline: none;
+  border-color: #6F42C1;
+}
+
+.add-entry-form button {
+  grid-column: 1 / -1; 
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  background-color: #6F42C1;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.add-entry-form button:hover {
+  background-color: #5a33a2;
+}
+
+.message {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: bold;
+  color: green;
+}
+
+button.secondary {
+  margin-top: 15px;
+  background-color: #eee;
+  color: #2C2C54;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.secondary:hover {
+  background-color: #ddd;
+}
