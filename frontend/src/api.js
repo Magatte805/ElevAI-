@@ -42,4 +42,31 @@ async function getAnalysis(userId) {
     });
 }
 
-export { createUser, addDailyData, getUserData, getAnalysis };
+/* ✅ 5. LOGIN (À AJOUTER) */
+async function login(username, password) {
+  return fetchBackend(`${BASE_URL}/users/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+}
+
+/*  SIGNUP */
+async function signup(userData) {
+  return fetchBackend(`${BASE_URL}/users`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+}
+
+export {
+  createUser,
+  addDailyData,
+  getUserData,
+  getAnalysis,
+  login,
+  signup, 
+};
+
+

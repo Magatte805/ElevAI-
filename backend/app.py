@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware  # <-- ajouter ceci
+from fastapi.middleware.cors import CORSMiddleware  
 from routers import users, data, analysis
 import logging
 

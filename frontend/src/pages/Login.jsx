@@ -1,106 +1,70 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../api";
+import { login } from "../api";
 
 function Login() {
-  const [form, setForm] = useState({
-    age: "",
-    genre: "",
-    taille_cm: "",
-    poids_kg: "",
-    objectif: "",
-  });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
-  async function handleSubmit(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    setError("");
+
+    if (!username || !password) {
+      setError("Veuillez saisir votre nom d'utilisateur et mot de passe.");
+      return;
+    }
 
     try {
-      const res = await createUser(form);
-      const userId = res.id || res.user_id || res.userId;
-      localStorage.setItem("userId", userId);
-      navigate("/add-entry");
-    } catch (err) {
-      setError("Impossible de créer le profil (backend ?).");
-    }
+      const res = await login(username, password);
+      if (res?.token && res?.userId) {
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("userId", res.userId);
+        navigate("/add-entry");
+      } else {
+        setError("Nom d'utilisateur ou mot de passe incorrect.");
+      }
+    }catch (err) {
+  if (err.message.includes("Utilisateur inexistant")) {
+    setError("Pas encore de compte ? Veuillez vous inscrire.");
+  } else if (err.message.includes("Mot de passe incorrect")) {
+    setError("Mot de passe incorrect.");
+  } else {
+    setError("Erreur serveur ou réseau.");
+  }
+}
+
   }
 
   return (
-    <div>
-      <h2>Créer / Modifier mon profil</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Âge
-          <input
-            type="number"
-            name="age"
-            value={form.age}
-            onChange={handleChange}
-            required
-          />
-        </label>
+    <form onSubmit={handleLogin}>
+      <h2>Connexion</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <label>
-          Genre
-          <select
-            name="genre"
-            value={form.genre}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Choisir...</option>
-            <option value="Homme">Homme</option>
-            <option value="Femme">Femme</option>
-            <option value="Autre">Autre</option>
-          </select>
-        </label>
-
-        <label>
-          Taille (cm)
-          <input
-            type="number"
-            name="taille_cm"
-            value={form.taille_cm}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label>
-          Poids (kg)
-          <input
-            type="number"
-            name="poids_kg"
-            value={form.poids_kg}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <label>
-          Objectif
-          <input
-            type="text"
-            name="objectif"
-            value={form.objectif}
-            onChange={handleChange}
-            placeholder="Ex: Perdre du poids, mieux dormir..."
-          />
-        </label>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button type="submit" data-testid="create-profile-btn">
-          Enregistrer le profil
+      {error.includes("inscrire") && (
+        <button
+          type="button"
+          onClick={() => navigate("/signup")}
+          style={{ marginBottom: "10px" }}
+        >
+          S’inscrire
         </button>
-      </form>
-    </div>
+      )}
+
+      <input
+        placeholder="Username"
+        onChange={(e) => setUsername(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Mot de passe"
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit">Connexion</button>
+    </form>
   );
 }
 

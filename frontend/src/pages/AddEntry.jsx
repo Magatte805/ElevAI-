@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { addDailyData } from "../api";
+import Header from "../components/header"
 
 function AddEntry() {
   const navigate = useNavigate();
@@ -16,6 +17,13 @@ function AddEntry() {
     fc_repos: "",
   });
 
+  // Redirection si pas connecté
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
+  }, [navigate]);
+
+  // Récupération de l'userId
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) navigate("/login");
@@ -56,99 +64,48 @@ function AddEntry() {
 
   return (
     <div>
+      <Header />
+
       <h2>Ajouter une journée</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Date
-          <input
-            type="date"
-            name="date"
-            value={form.date}
-            onChange={handleChange}
-            required
-          />
+          <input type="date" name="date" value={form.date} onChange={handleChange} required />
         </label>
 
         <label>
           Sommeil (h)
-          <input
-            type="number"
-            step="0.1"
-            name="sommeil_h"
-            value={form.sommeil_h}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" step="0.1" name="sommeil_h" value={form.sommeil_h} onChange={handleChange} required />
         </label>
 
         <label>
           Pas
-          <input
-            type="number"
-            name="pas"
-            value={form.pas}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" name="pas" value={form.pas} onChange={handleChange} required />
         </label>
 
         <label>
           Sport (min)
-          <input
-            type="number"
-            name="sport_min"
-            value={form.sport_min}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" name="sport_min" value={form.sport_min} onChange={handleChange} required />
         </label>
 
         <label>
           Calories
-          <input
-            type="number"
-            name="calories"
-            value={form.calories}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" name="calories" value={form.calories} onChange={handleChange} required />
         </label>
 
         <label>
           Humeur (0–5)
-          <input
-            type="number"
-            min="0"
-            max="5"
-            name="humeur_0_5"
-            value={form.humeur_0_5}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" min="0" max="5" name="humeur_0_5" value={form.humeur_0_5} onChange={handleChange} required />
         </label>
 
         <label>
           Stress (0–5)
-          <input
-            type="number"
-            min="0"
-            max="5"
-            name="stress_0_5"
-            value={form.stress_0_5}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" min="0" max="5" name="stress_0_5" value={form.stress_0_5} onChange={handleChange} required />
         </label>
 
         <label>
           Fréquence cardiaque au repos
-          <input
-            type="number"
-            name="fc_repos"
-            value={form.fc_repos}
-            onChange={handleChange}
-            required
-          />
+          <input type="number" name="fc_repos" value={form.fc_repos} onChange={handleChange} required />
         </label>
 
         <button type="submit" data-testid="add-entry-btn">
@@ -158,14 +115,9 @@ function AddEntry() {
 
       {message && <p>{message}</p>}
 
-        <button
-        type="button"
-        className="secondary"
-        onClick={() => navigate("/dashboard")}
-        >
+      <button type="button" className="secondary" onClick={() => navigate("/dashboard")}>
         Aller au Dashboard
-        </button>
-
+      </button>
     </div>
   );
 }

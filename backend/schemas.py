@@ -19,6 +19,10 @@ class UserOut(UserBase):
     class Config:
         orm_mode = True  
 
+class UserCreate(UserBase):
+    username: str
+    password: str
+
 # Schéma pour DailyData
 class DailyDataBase(BaseModel):
     date: date
@@ -72,3 +76,7 @@ class CustomAnalysisOut(BaseModel):
     category: str
     explanations: dict
     recommendations: List[str]
+
+class UserLogin(BaseModel):
+    username: str
+    password: str

@@ -1,17 +1,21 @@
 from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, JSON
 from sqlalchemy.orm import relationship
-from backend.database import Base, engine
+from .database import Base, engine
+
 
 # Modèle User
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    password = Column(String)
     age = Column(Integer, nullable=False)
     genre = Column(String, nullable=False)
     taille_cm = Column(Float, nullable=False)
     poids_kg = Column(Float, nullable=False)
     objectif = Column(String, nullable=True)
 
+   
     # Relation avec DailyData
     daily_data = relationship("DailyData", back_populates="user")
     # Relation optionnelle avec AnalysisResult

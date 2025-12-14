@@ -1,19 +1,22 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import Layout from "./components/Layout.jsx";
-import Login from "./pages/Login.jsx";
-import AddEntry from "./pages/AddEntry.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
-
+import { Routes, Route } from "react-router-dom";
+import Splash from "./pages/splash";
+import Home from "./pages/home";
+import Login from "./pages/Login";
+import Signup from "./pages/signup";
+import Dashboard from "./pages/Dashboard";
+import AddEntry from "./pages/AddEntry";
+import Logout from "./pages/logout";
 function App() {
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/add-entry" element={<AddEntry />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      <Route path="/" element={<Splash />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/add-entry" element={<AddEntry />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+       <Route path="/logout" element={<Logout />} />
+    </Routes>
   );
 }
 

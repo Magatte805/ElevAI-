@@ -25,7 +25,16 @@ function Dashboard() {
       { metric: "Humeur", value: 50 },
     ],
   };
+ useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/Login");
+  }, [navigate]);
 
+  return (
+    <div>
+      {/* Formulaire pour ajouter sa journée */}
+    </div>
+  );
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
