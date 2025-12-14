@@ -129,6 +129,21 @@ function Dashboard() {
         <ScoreCard score={analysisReady.score} category={analysisReady.category} />
       </div>
 
+      {/* 💡 Recommandations */}
+      <div className="dashboard-card recommendations-card">
+        <h2 className="card-title">Recommandations personnalisées</h2>
+
+        {analysisReady.recommendations && analysisReady.recommendations.length > 0 ? (
+          <ul className="recommendations-list">
+            {analysisReady.recommendations.map((rec, i) => (
+              <li key={i}>{rec}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>Aucune recommandation disponible pour le moment.</p>
+        )}
+      </div>
+
       {/* Radar & 5 derniers scores côte à côte */}
       <div className="card-row">
         {/* RADAR */}

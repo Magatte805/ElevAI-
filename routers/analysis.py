@@ -120,10 +120,6 @@ def analyze_custom(data: schemas.CustomAnalysisInput):
 
 @router.get("/recommend/{user_id}")
 def get_recommendations(user_id: int, db: Session = Depends(get_db)):
-    """
-    Retourne uniquement les recommandations personnalisées
-    pour un utilisateur donné.
-    """
     # On récupère la dernière analyse stockée
     analysis = crud.get_latest_analysis(db, user_id)
 
