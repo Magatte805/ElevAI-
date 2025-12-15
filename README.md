@@ -123,11 +123,8 @@ pip install -r backend/requirements.txt
 ### 3️⃣ Lancer le backend
 Le point d’entrée de l’application backend est app.py dans le dossier backend.
 ```bash
-# Se placer dans le dossier backend
-cd backend
-
 # Lancer le serveur FastAPI
-uvicorn app:app --reload
+uvicorn backend.app:app --reload
 ```
 - L’option --reload permet de recharger automatiquement le serveur si vous modifiez le code.
 - Par défaut, le backend tourne sur http://127.0.0.1:8000.
