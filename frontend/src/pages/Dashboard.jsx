@@ -5,7 +5,16 @@ import ScoreCard from "../components/ScoreCard";
 import RadarCard from "../components/RadarCard";
 import Header from "../components/header"; 
 import { predictNext7Days } from "../utils/predictions";
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
+
 import './styles/dashboard.css';
 
 function describeFeature(feature, type) {
@@ -151,41 +160,38 @@ function Dashboard() {
           <h2 className="card-title">Répartition de vos indicateurs clés</h2>
           <RadarCard data={analysisReady.radar} />
         </div>
+        {/* Évolution des scores */}
+        <div className="dashboard-card card-half">
+          <h2 className="card-title">Évolution des scores récents</h2>
 
-        {/* 5 derniers scores */}
-        <div className="dashboard-card card-half pie-section">
-          <h2 className="card-title">Comparaison des 5 derniers scores</h2>
           {historicalScores.length === 0 ? (
             <p>Aucune donnée pour l’instant.</p>
           ) : (
-            <PieChart width={300} height={300}>
-              <Pie
-                data={historicalScores.slice(-5).map((score, idx) => ({
-                  name: `Jour ${data.length - 5 + idx + 1}`,
-                  value: score
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart
+                data={historicalScores.map((score, idx) => ({
+                  jour: `Jour ${idx + 1}`,
+                  score,
                 }))}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#6F42C1"
-                label={({ value }) => `${value}%`}
               >
-                {historicalScores.slice(-5).map((_, idx) => (
-                  <Cell key={`cell-${idx}`} fill={["#6F42C1", "#2C2C54", "#8E44AD", "#9B59B6", "#BB8FCE"][idx % 5]} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value, name) => [`${value}%`, name]}
-              />
-              <Legend verticalAlign="bottom" height={36} />
-            </PieChart>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="jour" />
+                <YAxis domain={[0, 100]} />
+                <Tooltip formatter={(value) => [`${value}%`, 'Score']} />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="#6F42C1"
+                  strokeWidth={3}
+                  dot={{ r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           )}
         </div>
       </div>
-
-      {/* Anomalies */}
+      {/* Détection des Anomalies */}
       <div className="dashboard-card">
         <h2 className="card-title">Anomalies détectées</h2>
         {anomalies.length === 0 ? (

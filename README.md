@@ -73,7 +73,6 @@ Outils nécessaires :
 ### Étape 1 : Cloner le projet
 ```bash
 git clone "https://github.com/Magatte805/ElevAI-.git"
-cd ElevAI
 ```
 
 ## Lancement du projet

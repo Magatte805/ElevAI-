@@ -17,7 +17,6 @@ function App() {
       <Route path="/add-entry" element={<AddEntry />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/logout" element={<Logout />} />
-
     </Routes>
   );
 }
