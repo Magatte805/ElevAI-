@@ -46,6 +46,10 @@ function Dashboard() {
     async function fetchAnomalies() {
       try {
         const res = await fetch(`http://localhost:8000/analyze/anomalies/${userId}`);
+        if (!res.ok) { // Gestion des 404
+          setAnomalies([]);
+          return;
+        }
         const data = await res.json();
         setAnomalies(data.anomalies || []);
       } catch (err) {
@@ -86,29 +90,19 @@ function Dashboard() {
   if (loading) return <p>Chargement du dashboard...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
-  const analysisReady = analysis
-    ? {
-        score: analysis.score,
-        category: analysis.category,
-        radar: [
-          { metric: "Sommeil", value: Math.round(analysis.explanations.sommeil_h * 100) },
-          { metric: "Activité", value: Math.round(analysis.explanations.pas * 100) },
-          { metric: "Stress", value: Math.round(analysis.explanations.stress_0_5 ?? 50) }, 
-          { metric: "Humeur", value: Math.round(analysis.explanations.humeur_0_5 * 100) },
-        ],
-        recommendations: analysis.recommendations,
-      }
-    : {
-        score: 77,
-        category: "Bon",
-        radar: [
-          { metric: "Sommeil", value: 80 },
-          { metric: "Activité", value: 60 },
-          { metric: "Stress", value: 30 },
-          { metric: "Humeur", value: 75 },
-        ],
-        recommendations: ["Bien dormir", "Faire du sport", "Relaxer un peu"],
-      };
+  const hasData = data.length > 0;
+
+  const analysisReady = hasData && analysis ? {
+    score: analysis.score,
+    category: analysis.category,
+    radar: [
+      { metric: "Sommeil", value: Math.round(analysis.explanations.sommeil_h * 100) },
+      { metric: "Activité", value: Math.round(analysis.explanations.pas * 100) },
+      { metric: "Stress", value: Math.round(analysis.explanations.stress_0_5 ?? 50) },
+      { metric: "Humeur", value: Math.round(analysis.explanations.humeur_0_5 * 100) },
+    ],
+    recommendations: analysis.recommendations,
+  } : null;
 
   function calculateDailyScore(row) {
     const sommeil = Math.min(row.sommeil_h || 0, 12);
@@ -134,64 +128,65 @@ function Dashboard() {
       <h1 className="dashboard-title">Bienvenue sur ton Dashboard</h1>
 
       {/* SCORE */}
-      <div className="dashboard-card">
-        <ScoreCard score={analysisReady.score} category={analysisReady.category} />
-      </div>
+      {analysisReady ? (
+        <div className="dashboard-card">
+          <ScoreCard score={analysisReady.score} category={analysisReady.category} />
+        </div>
+      ) : (
+        <p>Aucune donnée pour le moment, ajoutez votre première journée !</p>
+      )}
+
+      {/* RADAR */}
+      {analysisReady && (
+        <div className="dashboard-card card-half">
+          <h2 className="card-title">Répartition de vos indicateurs clés</h2>
+          <RadarCard data={analysisReady.radar} />
+        </div>
+      )}
 
       {/* 💡 Recommandations */}
-      <div className="dashboard-card recommendations-card">
-        <h2 className="card-title">Recommandations personnalisées</h2>
-
-        {analysisReady.recommendations && analysisReady.recommendations.length > 0 ? (
+      {analysisReady && analysisReady.recommendations.length > 0 && (
+        <div className="dashboard-card recommendations-card">
+          <h2 className="card-title">Recommandations personnalisées</h2>
           <ul className="recommendations-list">
             {analysisReady.recommendations.map((rec, i) => (
               <li key={i}>{rec}</li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Évolution des scores */}
+      <div className="dashboard-card card-half">
+        <h2 className="card-title">Évolution des scores récents</h2>
+        {historicalScores.length === 0 ? (
+          <p>Aucune donnée pour l’instant.</p>
         ) : (
-          <p>Aucune recommandation disponible pour le moment.</p>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={historicalScores.map((score, idx) => ({
+                jour: `Jour ${idx + 1}`,
+                score,
+              }))}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="jour" />
+              <YAxis domain={[0, 100]} />
+              <Tooltip formatter={(value) => [`${value}%`, 'Score']} />
+              <Line
+                type="monotone"
+                dataKey="score"
+                stroke="#6F42C1"
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                activeDot={{ r: 7 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         )}
       </div>
 
-      {/* Radar & 5 derniers scores côte à côte */}
-      <div className="card-row">
-        {/* RADAR */}
-        <div className="dashboard-card card-half">
-          <h2 className="card-title">Répartition de vos indicateurs clés</h2>
-          <RadarCard data={analysisReady.radar} />
-        </div>
-        {/* Évolution des scores */}
-        <div className="dashboard-card card-half">
-          <h2 className="card-title">Évolution des scores récents</h2>
-
-          {historicalScores.length === 0 ? (
-            <p>Aucune donnée pour l’instant.</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart
-                data={historicalScores.map((score, idx) => ({
-                  jour: `Jour ${idx + 1}`,
-                  score,
-                }))}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="jour" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip formatter={(value) => [`${value}%`, 'Score']} />
-                <Line
-                  type="monotone"
-                  dataKey="score"
-                  stroke="#6F42C1"
-                  strokeWidth={3}
-                  dot={{ r: 5 }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-      </div>
-      {/* Détection des Anomalies */}
+      {/* Détection des anomalies */}
       <div className="dashboard-card">
         <h2 className="card-title">Anomalies détectées</h2>
         {anomalies.length === 0 ? (
@@ -209,7 +204,7 @@ function Dashboard() {
 
       {/* Prévision 7 jours */}
       <div className="dashboard-card">
-        <h2 className="card-title">Prévision de vos scores des 7 prochians jours</h2>
+        <h2 className="card-title">Prévision de vos scores des 7 prochains jours</h2>
         <ul>
           {next7DaysPrediction.map((score, i) => (
             <li key={i}>Jour {i + 1} : {score}%</li>

@@ -4,8 +4,9 @@ function ScoreCard({ score, category, riskPrediction }) {
   const safeScore = Math.min(Math.max(score || 0, 0), 100);
 
   function getColor(score) {
-    if (score > 80) return "#16a34a";   
-    if (score > 50) return "#f97316";   
+    if (score > 75) return "#16a34a";   
+    if (score > 50) return "#f97316";  
+    if (score > 25) return "#F91673"
     return "#dc2626";                    
   }
 
