@@ -78,7 +78,6 @@ Outils nécessaires :
 ### Étape 1 : Cloner le projet
 ```bash
 git clone "https://github.com/Magatte805/ElevAI-.git"
-cd ElevAI
 ```
 
 ## Lancement du projet
@@ -102,18 +101,36 @@ Librairies principales à installer (déjà listées dans requirements.txt) :
 
 ### Installation :
 ``` bash
+# Se placer dans le dossier racine du projet
+cd ELEVAI-
+# Installer les dépendances
 pip install -r backend/requirements.txt
+```
+#### Remarque si pip ne fonctionne pas
+- Sur certaines machines, pip peut ne pas être reconnu.
+- Dans ce cas, utilisez une les commandes suivantes selon votre configuration :
+
+```bash
+py -m pip install -r backend/requirements.txt
+# ou
+python -m pip install -r backend/requirements.txt
 ```
 
 ### 2. Lancer le backend
 Le point d’entrée de l’application backend est app.py dans le dossier backend.
 Le backend doit être lancé depuis le dossier racine du projet (ElevAi).
+Se placer dans le dossier ElEVAI- (si ce n’est pas déjà fait) :
 ```bash
-# Se placer dans le dossier racine du projet
-cd ElevAi
-
 # Lancer le serveur FastAPI
 uvicorn backend.app:app --reload
+```
+#### Remarque si la commande uvicorn ne fonctionne pas
+- Sur certaines machines vous pouvez obtenir une erreur « uvicorn : Le terme n’est pas reconnu ».
+- Dans ce cas, utilisez une les commandes suivantes :
+```bash
+py -m uvicorn backend.app:app --reload
+# ou
+python -m uvicorn backend.app:app --reload
 ```
 - Par défaut, le backend tourne sur http://127.0.0.1:8000.
 - Vous pouvez tester que l’API fonctionne en ouvrant http://127.0.0.1:8000/docs dans votre navigateur pour accéder à la documentation interactive.
@@ -183,5 +200,5 @@ npx playwright install
 
 3. Lancer les tests
 ```bash
-npx playwright test
+npx playwright test --reporter=html
 ```
