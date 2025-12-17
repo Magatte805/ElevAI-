@@ -57,12 +57,13 @@ ElevAI/
 │   │   ├── components/        # Composants réutilisables
 │   │   ├── pages/             # Pages principales
 │   │   └── utils/             # Fonctions utilitaires
-                  
+        └── app.jsx  
+        └── api.js                  
 │   │
 │   ├── package.json           # Dépendances frontend
 │   └── vite.config.js         # Configuration Vite
     └── tests/                 # Les tests plawright
-    └── test-results/          # les résultats des tests playwright
+    
 │
 └── README.md                  # Documentation du projet
 ```
@@ -108,7 +109,7 @@ pip install -r backend/requirements.txt
 ```
 #### Remarque si pip ne fonctionne pas
 - Sur certaines machines, pip peut ne pas être reconnu.
-- Dans ce cas, utilisez une les commandes suivantes selon votre configuration :
+- Dans ce cas, utilisez une des commandes suivantes selon votre configuration :
 
 ```bash
 py -m pip install -r backend/requirements.txt
@@ -126,7 +127,7 @@ uvicorn backend.app:app --reload
 ```
 #### Remarque si la commande uvicorn ne fonctionne pas
 - Sur certaines machines vous pouvez obtenir une erreur « uvicorn : Le terme n’est pas reconnu ».
-- Dans ce cas, utilisez une les commandes suivantes :
+- Dans ce cas, utilisez une des commandes suivantes :
 ```bash
 py -m uvicorn backend.app:app --reload
 # ou
@@ -136,7 +137,7 @@ python -m uvicorn backend.app:app --reload
 - Vous pouvez tester que l’API fonctionne en ouvrant http://127.0.0.1:8000/docs dans votre navigateur pour accéder à la documentation interactive.
 
 ### 3. Lancer le frontend
-Le frontend est développé avec React et permet d’afficher le dashboard interactif avec toutes les visualisations (score, radar, recommandations, 5 derniers scores, prévisions, anomalies…).
+Le frontend est développé avec React et permet d’afficher le dashboard interactif avec toutes les visualisations (score, radar, recommandations, évolution des scores, prévisions, anomalies…).
 
 💡 Astuce : ouvrez deux terminaux côte à côte. Dans l’un vous lancez le backend, dans l’autre le frontend.
 
