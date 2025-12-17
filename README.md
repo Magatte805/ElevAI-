@@ -203,3 +203,77 @@ npx playwright install
 ```bash
 npx playwright test --reporter=html
 ```
+
+
+## Questions de réflexion
+
+### 1.Pourquoi avoir choisi ce type de modèle ? Quelles alternatives envisagées ?
+
+Nous avons choisi un **RandomForestRegressor** car il est bien adapté à notre problème de prédiction d’un score à partir de données hétérogènes (sommeil, pas, sport, humeur, stress, etc.).
+Les principales raisons de ce choix sont :
+- il gère bien les **relations non linéaires** entre les variables,
+- il est **robuste au bruit** et aux petites variations des données,
+- il fonctionne correctement même avec un **jeu de données de taille limitée**,
+- il ne nécessite pas d’hypothèses fortes sur la distribution des données.
+
+De plus, le Random Forest permet d’analyser l’**importance des features**, ce qui est intéressant pour expliquer les résultats à l’utilisateur.
+
+**Alternatives envisagées :**
+
+-  **Régression linéaire** : trop simpliste pour capturer les relations complexes entre les variables.
+-  **Gradient Boosting / XGBoost** : potentiellement plus performant, mais plus complexe à régler.
+- **Réseaux de neurones** : nécessitent plus de données et sont moins interprétables pour ce type d’application.
+
+### 2. Comment gérer l’échelle naturelle des features (ex : pas vs humeur) ?
+
+Les features ont des échelles très différentes :
+- `pas` : valeurs élevées (milliers),
+- `humeur` et `stress` : échelle réduite (0 à 5),
+- `sommeil_h` ou `sport_min` : valeurs intermédiaires.
+
+Pour éviter qu’une feature domine les autres, nous appliquons une **standardisation** des données avec `StandardScaler` :
+- centrage des données autour de 0,
+- réduction à une variance unitaire.
+
+
+### 3. Quelles métriques d’évaluation sont pertinentes pour votre approche ?
+
+Le problème est un **problème de régression**, les métriques pertinentes sont donc :
+-  **MAE (Mean Absolute Error)** : mesure l’erreur moyenne, facile à interpréter.
+- **RMSE (Root Mean Squared Error)** : pénalise davantage les grandes erreurs.
+- **R² score** : indique la proportion de variance expliquée par le modèle.
+
+### 4. Comment assurer la reproductibilité (random_state, versions, seeds) ?
+
+La reproductibilité est assurée par plusieurs éléments :
+
+- l’utilisation d’un **`random_state=42`** dans le `RandomForestRegressor`,
+- la séparation claire entre données, preprocessing et modèle,
+- la sauvegarde du modèle et du scaler avec `pickle`,
+- le versioning du code via **Git**,
+- la liste des dépendances dans `requirements.txt`.
+
+Ainsi, à partir des mêmes données et du même code, le modèle produit toujours les mêmes résultats.
+
+### 5. Quelles seraient les failles de sécurité à traiter avant un déploiement public ?
+
+Avant un déploiement réel, plusieurs points doivent être renforcés :
+
+- **Sécurité de l’authentification** :
+  * hashage des mots de passe,
+  * gestion sécurisée des tokens (JWT avec expiration).
+- **Sécurité des données utilisateur** :
+  - protection des données personnelles (RGPD),
+  - limitation de l’accès aux données par utilisateur.
+- **Sécurité de l’API** :
+
+  - validation stricte des entrées (Pydantic),
+  - protection contre les attaques par injection.
+- **Sécurité du modèle** :
+
+  - contrôle des données envoyées au modèle,
+  - éviter l’exposition directe du fichier `model.pkl`.
+- **Configuration serveur** :
+
+  - gestion correcte des CORS,
+  - stockage sécurisé des clés et secrets.
